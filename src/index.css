@@ -1,13 +1,254 @@
-body {
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html,
+body {
+  scroll-behavior: smooth;
+}
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+@font-face {
+  font-family: "Freigeist Con";
+  src: url('./styles/Fontspring-DEMO-freigeist-conblack.otf');
+}
+
+@font-face {
+  font-family: "Freigeist Con Italic";
+  src: url('./styles/Fontspring-DEMO-freigeist-conmediumitalic.otf');
+}
+
+@layer components {
+
+  .title {
+    color: white;
+    letter-spacing: -0.1em;
+    text-transform: uppercase;
+    line-height: 0.9;
+  }
+
+  .title-italic {
+    font-family: "Freigeist Con Italic", sans-serif;
+    color: white;
+    text-transform: uppercase;
+    line-height: 0.9;
+  }
+
+  .pulse {
+    position: relative;
+  }
+
+  .pulse::before {
+    content: "";
+    display: block;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    border: 2px solid white;
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    transform-origin: center;
+    mix-blend-mode: screen;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1
+    }
+
+    70% {
+      transform: translate(-50%, -50%) scale(1.4);
+      opacity: 0
+    }
+
+    70.1%,
+    100% {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1
+    }
+  }
+
+  .text-ring {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .text-ring [style*="--index"] {
+    position: absolute;
+    text-transform: uppercase;
+    font-family: monospace;
+    color: var(--color);
+    font-size: calc(var(--font-size, 2) * 1rem);
+    transform: rotate(calc(360deg*var(--index)/var(--total))) translateY(calc(var(--radius, 5)*-1px));
+    animation: text-spin 4s infinite linear;
+  }
+
+  @keyframes text-spin {
+
+    100% {
+      transform:
+        rotate(calc(calc(360deg*var(--index)/var(--total)) + 360deg)) translateY(calc(var(--radius, 5)*-1px));
+    }
+  }
+
+  .text-slider-container {
+    width: fit-content;
+    white-space: nowrap;
+    column-gap: 5px;
+  }
+
+  .text-slider {
+    width: fit-content;
+    height: 1em;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .text-slide:last-child {
+    opacity: 0;
+  }
+
+  .text-slider .text-slide {
+    display: inline-block;
+    width: fit-content;
+    height: 1em;
+    font-size: 1em;
+    line-height: 1.05em;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .text-slider-container:hover .text-slide {
+    transform: translateY(-100%);
+  }
+
+  .text-slider-container:hover .text-slide:first-child {
+    opacity: 0;
+  }
+
+  .text-slider-container:hover .text-slide:last-child {
+    opacity: 1;
+  }
+
+  .marque {
+    display: flex;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .marque-seperator {
+    display: inline-block;
+    width: 40px;
+    height: 1em;
+    flex-shrink: 0;
+  }
+
+  .marque .marque-text {
+    display: flex;
+    justify-content: start;
+    align-items: start;
+    white-space: nowrap;
+    width: fit-content;
+  }
+  .marque:has(> .marque-seperator) .marque-text{
+    animation: marque-seperated var(--time) infinite linear forwards;
+  }
+  
+  .marque:not(:has(> .marque-seperator)) .marque-text{
+    animation: marque var(--time) infinite linear forwards;
+  }
+
+  @keyframes marque {
+    to {
+      transform: translateX(calc(100% * var(--direction)));
+    }
+  }
+
+  @keyframes marque-seperated {
+    to {
+      transform: translateX(calc(calc(100% + 40px) * var(--direction)));
+    }
+  }
+
+  @keyframes blink {
+
+    100%,
+    0% {
+      opacity: 0;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes grow {
+    0% {
+      transform: scale(1);
+    }
+
+    100% {
+      transform: scale(1.2);
+    }
+  }
+
+  .main-ring-text,
+  .ring-text {
+    position: absolute;
+    font-family: monospace;
+    font-weight: 500;
+    font-size: 1.2rem;
+  }
+  .main-ring-text{
+    left: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    color: blue;
+  }
+  .ring-text{
+    transition: all 0.3s ease-in-out;
+    opacity: 0;
+  }
+
+  .show-ring-texts:hover>.ring-text {
+    transform: 
+      rotate(calc(360deg / var(--total) * calc(var(--index))))
+      translateY(calc(calc(var(--radius) + 5px) * -1));
+    opacity: 1;
+  }
+
+  @keyframes float{
+    0%,100%{
+      transform: translateY(0);
+    }
+    50%{
+      transform: translateY(-5%);
+    }
+  }
+
+  @keyframes float-opposite{
+    0%,100%{
+      transform: translateY(-5%);
+    }
+    50%{
+      transform: translateY(0%);
+    }
+  }
 }
